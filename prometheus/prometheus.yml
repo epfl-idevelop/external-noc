@@ -40,12 +40,17 @@ scrape_configs:
     static_configs:
       - targets:
         - https://www.epfl.ch
-        - https://go.epfl.ch
         - https://people.epfl.ch
         - https://memento.epfl.ch
         - https://actu.epfl.ch
-        - https://it.epfl.ch
         - https://igm.epfl.ch
+        labels:
+          c2c: 'yes'
+      - targets:
+        - https://go.epfl.ch
+        - https://it.epfl.ch
+        labels:
+          c2c: 'no'
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -61,12 +66,17 @@ scrape_configs:
     static_configs:
       - targets:
         - https://www.epfl.ch
-        - https://go.epfl.ch
         - https://people.epfl.ch
         - https://memento.epfl.ch
         - https://actu.epfl.ch
-        - https://it.epfl.ch
         - https://igm.epfl.ch
+        labels:
+          c2c: 'yes'
+      - targets:
+        - https://go.epfl.ch
+        - https://it.epfl.ch
+        labels:
+          c2c: 'no'
     basic_auth:
       username: prob1
       password: "wy3t727VYBz85pKJm8dT"
@@ -79,3 +89,33 @@ scrape_configs:
       - target_label: __address__
         replacement: prob.86.119.40.68.nip.io
 
+
+  # - job_name: 'ressenti_test2'
+  #   metrics_path: /ressentiprobe
+  #   params:
+  #     module: [ressenti_firefox]
+  #   static_configs:
+  #     - targets:
+  #       - https://www.epfl.ch
+  #       - https://memento.epfl.ch
+  #       labels:
+  #         c2c: 'yes'
+  #     - targets:
+  #       - https://go.epfl.ch
+  #       labels:
+  #         c2c: 'no'
+  #   basic_auth:
+  #     username: prob1
+  #     password: "wy3t727VYBz85pKJm8dT"
+  #
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: __param_target
+  #     - source_labels: [__param_target]
+  #       target_label: instance
+  #     # - target_label: c2c
+  #     #   replacement: yes
+  #     # - target_label: location
+  #     #   replacement: zurich
+  #     - target_label: __address__
+  #       replacement: prob.86.119.40.68.nip.io

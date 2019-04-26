@@ -32,26 +32,26 @@ which depends on [OpenStack Neutron Security
 Groups](https://wiki.openstack.org/wiki/Neutron/SecurityGroups).
 
 # New instance
-As it stands, this need a few manual actions to deploy this setup on a new 
+As it stands, this need a few manual actions to deploy this setup on a new
 place:
-  1. Copy of the [`sample.env`](sample.env) to a `.env` file, and configuration 
+  1. Copy of the [`sample.env`](sample.env) to a `.env` file, and configuration
      of the project's variables;
-  1. Get new secrets for the GitHub authentication (`GF_AUTH_GITHUB_CLIENT_ID` 
-     and `GF_AUTH_GITHUB_CLIENT_SECRET`) variables from 
-     [GitHUb](https://github.com): https://github.com > Organization > 
-     Settings > Developer settings > OAuth Apps. Be sure to set app's "Homepage 
-     URL" and "Authorization callback URL" as defined in the 
+  1. Get new secrets for the GitHub authentication (`GF_AUTH_GITHUB_CLIENT_ID`
+     and `GF_AUTH_GITHUB_CLIENT_SECRET`) variables from
+     [GitHUb](https://github.com): https://github.com > Organization >
+     Settings > Developer settings > OAuth Apps. Be sure to set app's "Homepage
+     URL" and "Authorization callback URL" as defined in the
      [Grafana's GitHub OAuth2 Authentication page](http://docs.grafana.org/auth/github/#configure-github-oauth-application);
-  1. Use [Let's encrypt certbot](https://certbot.eff.org/) to get a certificate 
+  1. Use [Let's encrypt certbot](https://certbot.eff.org/) to get a certificate
      for the Grafana's frontend;
-  1. You may want to tune some target URLs in the 
+  1. You may want to tune some target URLs in the
      [`prometheus/prometheus.yml`](prometheus/prometheus.yml) file.
 
 After that, the `docker-compose up` command might pop the stuff up for you.
 
 ## .env
 This file will be sourced by docker-compose and will serve environment variables
-in the container. While it would not be necessary to explicitly named the 
+in the container. While it would not be necessary to explicitly named the
 variables in the [`docker-compose.yml`](docker-compose.yml) file, it surely is
 more exhaustive and readable that way.
 
@@ -72,32 +72,77 @@ right which can be set to "Editor" or "Admin" visiting your instance
 ## Certificate
 Using [Let's encrypt certbot](https://certbot.eff.org/) to get a certificate is
 damn easy:
-  1. On your server, install the [certbot](https://certbot.eff.org/) package, 
+  1. On your server, install the [certbot](https://certbot.eff.org/) package,
      e.g. `# apt install certbot`;
   1. One can not get a cetificate without a domaine name (i.e. with only an IP),
      you can use `dig +short ptr -x [[YOUR IP]]` to get the correct name;
   1. Run the following certbot command:  
      `# certbot certonly --standalone --preferred-challenges http --renew-by-default -d instance.cloud.example.com`
-  1. certbot will generate certificates in the 
+  1. certbot will generate certificates in the
      `/etc/letsencrypt/live/instance.cloud.example.com/` directory;
-  1. Last step is to copy newly generated `fullchain.pem` and `privkey.pem` 
+  1. Last step is to copy newly generated `fullchain.pem` and `privkey.pem`
      files to the grafana ssl's directory (mounted as follow in docker):
      * `./grafana/ssl/fullchain.pem:/var/ssl/server.crt`
      * `./grafana/ssl/privkey.pem:/var/ssl/server.key`
 
 ## Prometheus & Blackbox exporter
 Prometheus configuration stands in the
-[`prometheus/prometheus.yml`](prometheus/prometheus.yml) file. The Blackbox 
-exporter is used to probe some URLs which are defined in the config file. You 
-may need to understand how the [Blackbox exporter 
+[`prometheus/prometheus.yml`](prometheus/prometheus.yml) file. The Blackbox
+exporter is used to probe some URLs which are defined in the config file. You
+may need to understand how the [Blackbox exporter
 modules](https://github.com/prometheus/blackbox_exporter/blob/master/CONFIGURATION.md#module),
-defined in 
-[`blackbox-exporter/config/blackbox.yml`](blackbox-exporter/config/blackbox.yml) 
+defined in
+[`blackbox-exporter/config/blackbox.yml`](blackbox-exporter/config/blackbox.yml)
 work in order to define new
-[scrape_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) 
-for Prometheus. The Blackbox exporter allow probing of endpoints over HTTP, 
+[scrape_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config)
+for Prometheus. The Blackbox exporter allow probing of endpoints over HTTP,
 HTTPS, DNS, TCP and ICMP.
 
+## Export for C2C
+C2C will pull all metrics starting with `vpsi_wwp_federation:` that are recorded
+in a dedicated rule file `rules/c2c_federate.yml`. The command used by C2C to fetch the metrics looks like the followint:
+```
+curl --globoff -u USERNAME:PASSWORD 'http://prometheus-86-119-37-70.nip.io/federate?match[]={__name__=~%22^vpsi_wwp_federation:.*%22}'
+```
+
+A recording rule will looks like the following example:
+```
+   - record: vpsi_wwp_federation:probe_duration_seconds
+     expr: probe_duration_seconds{c2c='yes'}
+```
+Since we will have multiple *probe_duration_seconds* metrics, we filter with an *ad-hoc*
+label (`c2c='yes'`) so we don't send to C2C all our metrics.
+The label is sticked to the metric in two ways:
+ 1. it is added to all targets of a given job as a *target_label* in the *relabel_configs* section:
+
+    ```
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: c2c                       <- look
+        replacement: yes                        <- here
+      - target_label: __address__
+        replacement: prob.86.119.40.68.nip.io
+    ```
+ 2. or it is a label assigned on a per-taraget base in the list of targets:
+    ```
+    - job_name: 'ressenti_test2'
+      metrics_path: /ressentiprobe
+      params:
+        module: [ressenti_firefox]
+      static_configs:
+        - targets:
+          - https://www.epfl.ch
+          - https://memento.epfl.ch
+          labels:
+            c2c: 'yes'
+        - targets:        
+          - https://go.epfl.ch
+          labels:
+            c2c: 'no'
+    ```
 
 # Links
   * [Prometheus](https://prometheus.io/docs/introduction/overview/)
@@ -111,4 +156,3 @@ HTTPS, DNS, TCP and ICMP.
     * [Docker](http://docs.grafana.org/installation/docker/)
     * [Auth GitHub](http://docs.grafana.org/auth/github/)
     * [Provisionning DataSource](http://docs.grafana.org/administration/provisioning/#example-datasource-config-file)
-    

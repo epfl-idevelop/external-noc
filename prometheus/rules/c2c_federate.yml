@@ -2,4 +2,8 @@ groups:
  - name: vpsi_wwp_federation
    rules:
    - record: vpsi_wwp_federation:probe_duration_seconds
-     expr: probe_duration_seconds
+     expr: "probe_duration_seconds{c2c='yes'}"
+   - record: vpsi_wwp_federation:probe_dns_lookup_time_seconds
+     expr: "probe_dns_lookup_time_seconds{c2c='yes'}"
+   - record: vpsi_wwp_federation:probe_http_content_length
+     expr: "probe_http_content_length{c2c='yes'}"
