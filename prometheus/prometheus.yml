@@ -33,7 +33,7 @@ scrape_configs:
     - targets: ['idevfsd-prometheus:9090', 'idevfsd-pushgateway:9091']
 
   # Prometheus Blackbox exporter scraper
-  - job_name: 'blackbox'
+  - job_name: 'blackbox_zurich'
     metrics_path: /probe
     params:
       module: [http_get]  # Look for a HTTP 200 response.
@@ -56,10 +56,14 @@ scrape_configs:
         target_label: __param_target
       - source_labels: [__param_target]
         target_label: instance
+      - target_label: origin
+        replacement: zurich
+      - target_label: probe
+        replacement: blackbox
       - target_label: __address__
         replacement: blackbox-exporter:9115  # The blackbox exporter's real hostname:port.
 
-  - job_name: 'ressenti'
+  - job_name: 'ressenti_firefox_zurich'
     metrics_path: /ressentiprobe
     params:
       module: [ressenti_firefox]
@@ -86,8 +90,47 @@ scrape_configs:
         target_label: __param_target
       - source_labels: [__param_target]
         target_label: instance
+      - target_label: origin
+        replacement: zurich
+      - target_label: probe
+        replacement: ressenti_firefox
       - target_label: __address__
         replacement: prob.86.119.40.68.nip.io
+
+  - job_name: 'ressenti_firefox_paris'
+    metrics_path: /ressentiprobe
+    params:
+      module: [ressenti_firefox]
+    static_configs:
+      - targets:
+        - https://www.epfl.ch
+        - https://people.epfl.ch
+        - https://memento.epfl.ch
+        - https://actu.epfl.ch
+        - https://igm.epfl.ch
+        labels:
+          c2c: 'yes'
+      - targets:
+        - https://go.epfl.ch
+        - https://it.epfl.ch
+        labels:
+          c2c: 'no'
+    basic_auth:
+      username: prob1
+      password: "wy3t727VYBz85pKJm8dT"
+
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: origin
+        replacement: paris
+      - target_label: probe
+        replacement: ressenti_firefox
+      - target_label: __address__
+        replacement: ressenti-paris.idev-fsd.ml
+
 
 
   # - job_name: 'ressenti_test2'
