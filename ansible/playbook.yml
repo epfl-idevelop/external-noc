@@ -6,7 +6,7 @@
         msg: "Starting ansible with {{ runenv }} environment."
 
 - name: External NOC
-  hosts: noc-test
+  hosts: noc
   gather_facts: no   # Not yet
   # Variables common to all roles
   vars:

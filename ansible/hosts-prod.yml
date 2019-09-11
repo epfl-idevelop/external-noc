@@ -5,16 +5,16 @@ all:
 
 noc:
   hosts:
-    fsdnoc:
-      ansible_host: prometheus.idev-fsd.ml
+    noc_prod1:
+      ansible_host: noc1.idev-fsd.ml
       ansible_port: 22
       ansible_user: root
-      noc_install_path: /root/anoc3
+      noc_install_path: /srv/noc
 
-bbox:
-  hosts:
-    prometheus-scratch:
-      ansible_host: prometheus-scratch.idev-fsd.ml
-      ansible_port: 22
-      ansible_user: ubuntu
-      noc_install_path: /home/ubuntu/anoc3
+#bbox:
+#  hosts:
+#    prometheus-scratch:
+#      ansible_host: prometheus-scratch.idev-fsd.ml
+#      ansible_port: 22
+#      ansible_user: ubuntu
+#      noc_install_path: /home/ubuntu/anoc3
