@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 2,
-  "iteration": 1568186589976,
+  "id": 4,
+  "iteration": 1568209412710,
   "links": [],
   "panels": [
     {
@@ -27,6 +27,7 @@
       "dashes": false,
       "datasource": "idevfsd-prometheus",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 5,
         "w": 23,
@@ -49,6 +50,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "paceLength": 10,
       "percentage": false,
       "pointradius": 2,
@@ -60,10 +64,10 @@
       "steppedLine": true,
       "targets": [
         {
-          "expr": "probe_http_status_code{probe=\"blackbox\", instance=~\"$instance\", origin=~\"$origin\"}",
+          "expr": "probe_http_status_code{probe=\"blackbox\", slug=~\"$slug\", origin=~\"$origin\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{origin}} <- {{instance}}",
+          "legendFormat": "{{slug}} [{{origin}}]",
           "refId": "A"
         }
       ],
@@ -116,6 +120,7 @@
       "datasource": "idevfsd-prometheus",
       "description": "Time to full page generation",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 23,
@@ -138,6 +143,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
@@ -149,10 +157,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "probe_duration_seconds{probe=\"ressenti_firefox\", instance=~\"$instance\", origin=~\"$origin\"}",
+          "expr": "probe_duration_seconds{probe=\"ressenti_firefox\", slug=~\"$slug\", origin=~\"$origin\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": " {{origin}} <- {{instance}}",
+          "legendFormat": " {{slug}} [{{origin}}]",
           "refId": "B"
         }
       ],
@@ -204,6 +212,7 @@
       "dashes": false,
       "datasource": "idevfsd-prometheus",
       "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
         "h": 10,
         "w": 23,
@@ -226,6 +235,9 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
       "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
@@ -237,24 +249,24 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "probe_dns_lookup_time_seconds{probe=\"blackbox\", instance=~\"$instance\", origin=~\"$origin\"}",
+          "expr": "probe_dns_lookup_time_seconds{probe=\"blackbox\", slug=~\"$slug\", origin=~\"$origin\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{origin}} <- dns {{instance}}",
+          "legendFormat": "{{slug}} [{{origin}}]: dns",
           "refId": "A"
         },
         {
-          "expr": "probe_duration_seconds{probe=\"blackbox\", instance=~\"$instance\", origin=~\"$origin\"}",
+          "expr": "probe_duration_seconds{probe=\"blackbox\", slug=~\"$slug\", origin=~\"$origin\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{origin}} <- total {{instance}}",
+          "legendFormat": "{{slug}}: total  [{{origin}}]",
           "refId": "B"
         },
         {
-          "expr": "clamp_min(probe_http_duration_seconds{probe=\"blackbox\", instance=~\"$instance\", origin=~\"$origin\"}, 0)",
+          "expr": "clamp_min(probe_http_duration_seconds{probe=\"blackbox\", slug=~\"$slug\", origin=~\"$origin\"}, 0)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{origin}} <- {{phase}} {{instance}}",
+          "legendFormat": "{{slug}}: {{phase}} [{{origin}}]",
           "refId": "C"
         }
       ],
@@ -317,12 +329,13 @@
       },
       "id": 10,
       "links": [],
+      "options": {},
       "pageSize": null,
       "scroll": true,
       "showHeader": true,
       "sort": {
-        "col": 0,
-        "desc": true
+        "col": null,
+        "desc": false
       },
       "styles": [
         {
@@ -344,10 +357,10 @@
       ],
       "targets": [
         {
-          "expr": "1000 * probe_ssl_earliest_cert_expiry{probe=\"blackbox\", instance=~\"$instance\", origin=~\"$origin\"}",
+          "expr": "1000 * probe_ssl_earliest_cert_expiry{probe=\"blackbox\", slug=~\"$slug\", origin=~\"$origin\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{origin}} <- {{instance}}",
+          "legendFormat": "{{slug}}",
           "refId": "A"
         }
       ],
@@ -359,40 +372,13 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 18,
+  "schemaVersion": 19,
   "style": "dark",
   "tags": [
     "ressenti"
   ],
   "templating": {
     "list": [
-      {
-        "allValue": ".*",
-        "current": {
-          "text": "https://www.epfl.ch",
-          "value": [
-            "https://www.epfl.ch"
-          ]
-        },
-        "datasource": "idevfsd-prometheus",
-        "definition": "label_values(probe_duration_seconds,instance)",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Site",
-        "multi": true,
-        "name": "instance",
-        "options": [],
-        "query": "label_values(probe_duration_seconds,instance)",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
       {
         "allValue": ".*",
         "current": {
@@ -410,6 +396,31 @@
         "name": "origin",
         "options": [],
         "query": "label_values(probe_duration_seconds,origin)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "idevfsd-prometheus",
+        "definition": "label_values(probe_duration_seconds,slug)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Site",
+        "multi": true,
+        "name": "slug",
+        "options": [],
+        "query": "label_values(probe_duration_seconds,slug)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -454,5 +465,5 @@
   "timezone": "",
   "title": "Ressenti",
   "uid": "yN_a7XRWz",
-  "version": 18
+  "version": 15
 }
