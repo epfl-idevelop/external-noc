@@ -1,0 +1,27 @@
+all:
+  vars:
+    runenv: dev
+    dnspostfix: ""
+
+noc:
+  hosts:
+    internal_noc1:
+      ansible_host: 10.95.16.6
+      ansible_port: 22
+      ansible_user: root
+      noc_install_path: /srv/noc
+      frontend_domain: inoc.jkldsa.com
+      traefik_certs: inoc.jkldsa.com
+      # ansible_python_interpreter: /usr/bin/python2
+      active_services:
+        - prometheus
+        - grafana
+
+
+
+# bbox:
+#   hosts:
+#     prometheus-scratch:
+#       ansible_host: prometheus-scratch.idev-fsd.ml
+#       ansible_port: 22
+#       ansible_user: ubuntu

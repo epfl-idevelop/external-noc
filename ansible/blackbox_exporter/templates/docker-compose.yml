@@ -2,7 +2,7 @@ version: '3'
 services:
   blackbox-exporter:
     container_name: blackbox-exporter
-    image: prom/blackbox-exporter
+    image: prom/blackbox-exporter:{{ image_version.bbe }}
     volumes:
       - ./config:/config
     command: --config.file=/config/blackbox.yml

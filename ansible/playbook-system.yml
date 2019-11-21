@@ -1,0 +1,24 @@
+- name: Setup system for docker
+  hosts: all
+
+  gather_facts: no   # Not yet
+  vars:
+    # vars for nickjj.docker
+    - docker__edition: "ce"
+    - docker__channel: ["stable"]
+    - docker__state: "present"
+    - docker__users: ["{{ ansible_user }}"]
+
+
+  roles:
+    - name: Install docker for Debian
+      role: nickjj.docker
+      become: yes
+      become_user: root
+      tags: docker
+      # when: ansible_facts['os_family'] == "Debian"
+
+    - name: Insatall docker for RH
+      role: docker_RH7
+      # when: ansible_facts['os_family'] == "RedHat"
+

@@ -9,3 +9,13 @@
   copy:
     src: traefik/
     dest: "{{traefik.install_path}}/"
+
+- name: Copy prometheus template configs
+  template:
+    src: "traefik.toml"
+    dest: "{{traefik.install_path}}/traefik.toml"
+
+- name: Copy certs
+  copy:
+    src: "/keybase/team/epfl_idevfsd/{{traefik_certs}}/"
+    dest: "{{traefik.install_path}}/certs/"

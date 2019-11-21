@@ -1,7 +1,7 @@
 version: '3'
 services:
   prometheus:                                  # Prometheus service on port 9090
-    image: prom/prometheus
+    image: "prom/prometheus:{{ image_version.prometheus }}"
     volumes:
       - ./prometheus:/etc/prometheus
       - ./data/prometheus:/prometheus
@@ -21,7 +21,7 @@ services:
 {% endif %}
 
   alertmanager:
-    image: quay.io/prometheus/alertmanager
+    image: quay.io/prometheus/alertmanager:{{ image_version.alertmanager }}
     volumes:
       - ./alertmanager/config:/config
     command: --config.file=/config/simple.yml
@@ -41,7 +41,7 @@ services:
 {% endif %}
 
   pushgateway:
-    image: prom/pushgateway
+    image: prom/pushgateway:{{ image_version.pushgateway }}
     restart: always
     networks:
       - {{ traefik.network }}
@@ -54,7 +54,7 @@ services:
       - "traefik.port={{ pushgateway.port }}"
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:{{ image_version.grafana }}
     restart: always
     volumes:
       - "{{ noc.install_path }}/data/grafana/data:/var/lib/grafana"
@@ -75,7 +75,7 @@ services:
 
 # https://github.com/prometheus/node_exporter#using-docker
   nodeexporter:
-    image: quay.io/prometheus/node-exporter
+    image: quay.io/prometheus/node-exporter:{{ image_version.nodeexporter }}
     restart: always
     pid: "host"
 #    network_mode: host

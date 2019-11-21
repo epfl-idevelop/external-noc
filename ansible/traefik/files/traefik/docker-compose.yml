@@ -24,7 +24,7 @@ version: '3'
 services:
   proxy:
     container_name: traefik
-    image: traefik:alpine # The official Traefik docker image
+    image: traefik:1.7 # The official Traefik docker image
     command: --api --docker # Enables the web UI and tells Traefik to listen to docker
     restart: always
     ports:
@@ -36,6 +36,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
       - ./traefik.toml:/traefik.toml
+      - ./certs:/certs
       - ./acme.json:/acme.json
 # ToDo: find better option to "log rotate" stuff
 # Our default is journald, see https://docs.docker.com/config/containers/logging/configure/
