@@ -1,7 +1,7 @@
 - name: Setup system for docker
   hosts: all
 
-  gather_facts: no   # Not yet
+  # gather_facts: no   # Not yet
   vars:
     # vars for nickjj.docker
     - docker__edition: "ce"
@@ -16,9 +16,9 @@
       become: yes
       become_user: root
       tags: docker
-      # when: ansible_facts['os_family'] == "Debian"
+      when: ansible_facts['os_family'] == "Debian"
 
     - name: Insatall docker for RH
       role: docker_RH7
-      # when: ansible_facts['os_family'] == "RedHat"
+      when: ansible_facts['os_family'] == "RedHat"
 

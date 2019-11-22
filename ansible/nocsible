@@ -1,0 +1,42 @@
+#!/bin/sh
+
+PEVER=16.7.7
+PYVER=3.6.4
+
+# set -x
+
+cd "$(dirname "$0")"
+export PYENV_ROOT="$PWD/tmp/pyenv"
+export PATH="$PYENV_ROOT/versions/$PYVER/bin:$PYENV_ROOT/bin:$PATH"
+export PYTHON_VERSION=$PYVER
+
+ensure_tmp () {
+  [ -d tmp ] || mkdir tmp
+}
+
+ensure_pipenv () {
+  ensure_tmp
+  [ -f "$PYENV_ROOT/bin/pyenv" ] && return
+  curl https://pyenv.run | bash
+}
+
+ensure_python() {
+  ensure_pipenv
+  pyenv install -s $PYVER
+}
+
+ensure_packages() {
+  pip install -q bcrypt
+  pip install -q docker-compose
+}
+
+ensure_ansible() {
+ test -x $PYENV_ROOT/versions/$PYVER/bin/ansible && return
+ ensure_python
+ $PYENV_ROOT/versions/$PYVER/bin/pip install ansible
+}
+
+ensure_ansible
+ensure_packages
+
+"$@"

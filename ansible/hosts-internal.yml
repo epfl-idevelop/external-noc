@@ -12,7 +12,6 @@ noc:
       noc_install_path: /srv/noc
       frontend_domain: inoc.jkldsa.com
       traefik_certs: inoc.jkldsa.com
-      # ansible_python_interpreter: /usr/bin/python2
       active_services:
         - prometheus
         - grafana

@@ -1,24 +1,26 @@
+- name: Install dnf
+  shell:
+    cmd: 'yum install -y dnf'
+    creates: "/usr/bin/dnf"
+
 - name: Install yum utils
-  package:
-    name: yum-utils
-    state: present
+  shell:
+    cmd: 'yum install -y yum-utils'
+    creates: "/usr/bin/yumdownloader"
 
 - name: Install device-mapper-persistent-data
-  package:
+  dnf:
     name: device-mapper-persistent-data
     state: present
-
 - name: Install lvm2
-  package:
+  dnf:
     name: lvm2
     state: present
-
 - name: Add Docker repo
   get_url:
     url: https://download.docker.com/linux/centos/docker-ce.repo
     dest: /etc/yum.repos.d/docker-ce.repo
   become: yes
-
 # - name: Enable Docker Edge repo
 #   ini_file:
 #     dest: /etc/yum.repos.d/docker-ce.repo
@@ -26,7 +28,6 @@
 #     option: enabled
 #     value: 0
 #   become: yes
-
 # - name: Enable Docker Test repo
 #   ini_file:
 #     dest: /etc/yum.repos.d/docker-ce.repo
@@ -34,7 +35,6 @@
 #     option: enabled
 #     value: 0
 #   become: yes
-
 - name: Enable RHEL extra repo
   ini_file:
     dest: /etc/yum.repos.d/redhat.repo 
@@ -42,29 +42,20 @@
     option: enabled
     value: 1
   become: yes
-
 - name: Install Docker
-  package:
+  dnf:
     name: docker-ce
     state: latest
   become: yes
-
 - name: Install docker-compose
-  package:
+  dnf:
     name: docker-compose
     state: latest
   become: yes
-
 - name: Start Docker service
   service:
     name: docker
     state: started
     enabled: yes
   become: yes
-
-# - name: Add user vagrant to docker group
-#   user:
-#     name: vagrant
-#     groups: docker
-#     append: yes
-#   become: yes
+  
