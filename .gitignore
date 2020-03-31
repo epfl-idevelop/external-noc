@@ -1,4 +1,6 @@
 .env
+.grafana*
+!.grafana.sample
 !grafana/ssl/README
 grafana/ssl/*
 grafana/data/grafana.db
