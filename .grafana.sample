@@ -4,7 +4,7 @@
 
 API_URL=https://grafana-tst.idev-fsd.ml
 BA_USER=admin
-BA_PASS=This is a very complicated password
+BA_PASS='This is a very complicated password'
 API_USER=apikeycurl
 API_KEY=aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrssstttuuuwwwxxxyyyzzz1234567890==
 ORG_NAME=Main Org.

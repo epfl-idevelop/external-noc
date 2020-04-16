@@ -46,16 +46,31 @@ check-curl:
 check-jq:
 	@type jq > /dev/null 2>&1 || { echo >&2 "Please install jq. Aborting."; exit 1; }
 
+
 # https://grafana.com/docs/http_api/org/#get-current-organization
 .PHONY: get-org
 get-org: check
 	@echo "$@: $(API_URL)"
-	curl --silent --user $(BA_USER):$(BA_PASS) $(API_URL)/api/org | jq
+	@curl --silent -X GET \
+		-H "Authorization: Bearer $(API_KEY)" \
+		-H "Content-Type: application/json" \
+		-H "Accept: application/json" \
+		$(API_URL)/api/org | jq
+
+# https://grafana.com/docs/http_api/org/#get-all-users-within-the-current-organization
+.PHONY: get-users
+get-users: check
+	@echo "$@"
+	@curl --silent -X GET \
+		-H "Authorization: Bearer $(API_KEY)" \
+		-H "Content-Type: application/json" \
+		-H "Accept: application/json" \
+	$(API_URL)/api/org/users | jq
 
 # https://grafana.com/docs/http_api/org/#get-organization-by-name
 # Only works with Basic Authentication (username and password)
-.PHONY: set-org
-set-org:
+.PHONY: set-org-name
+set-org-name:
 	@echo "$@"
 	curl -X PUT --user $(BA_USER):$(BA_PASS) \
 		-H "Content-Type: application/json" \
@@ -68,10 +83,12 @@ set-org:
 .PHONY: create-user
 create-user: check
 	@echo "$@"
+	PASSWORD := $(shell pwgen 20 -n1) \
+	echo $(PASSWORD) \
 	curl -X POST --user $(BA_USER):$(BA_PASS) \
 		-H "Content-Type: application/json" \
 		-H "Accept: application/json" \
-		-d '{"email":"ponsfrilus@gmail.com","name":"ponsfrilus","login":"ponsfrilus","theme":"dark","password":"averylongpassword"}' \
+		-d '{"email":"ponsfrilus@gmail.com","name":"ponsfrilus","login":"ponsfrilus","theme":"dark","password":}' \
 		$(API_URL)/api/admin/users | jq
 
 .PHONY: make-user-admin
@@ -88,7 +105,8 @@ make-user-admin: check
 .PHONY: add-org-user
 add-org-user: check
 	@echo "$@"
-	curl -X PUT --user $(BA_USER):$(BA_PASS) \
+	curl -X PUT \
+		-H "Authorization: Bearer $(API_KEY)" \
 		-H "Content-Type: application/json" \
 		-H "Accept: application/json" \
 		-d '{"role":"Admin","loginOrEmail":"ponsfrilus"}' \
