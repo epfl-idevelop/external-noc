@@ -1,16 +1,15 @@
 # iDev-FSD external NOC
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-- [iDev-FSD external NOC](#idev-fsd-external-noc)
-- [About](#about)
-- [Pre-requisites](#pre-requisites)
-	- [Installation](#installation)
-	- [Keybase](#keybase)
-- [Deployment](#deployment)
-- [Project's bricks](#projects-bricks)
-- [Usage](#usage)
-- [Links](#links)
-
+<!-- TOC titleSize:2 tabSpaces:2 depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 skip:1 title:1 charForUnorderedList:* -->
+## Table of Contents
+* [About](#about)
+* [Pre-requisites](#pre-requisites)
+  * [Installation](#installation)
+  * [Keybase](#keybase)
+* [Deployment](#deployment)
+* [Project's bricks](#projects-bricks)
+* [Usage](#usage)
+* [Links](#links)
 <!-- /TOC -->
 
 # About
